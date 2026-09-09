@@ -63,3 +63,36 @@
   .exercise-video{width:100%!important;height:auto!important;object-fit:contain!important}
   .demo-step-strip{grid-template-columns:repeat(2,minmax(0,1fr));margin-left:8px;margin-right:8px}
 }
+
+/* iPhone/Safari hardening: never let intrinsic video dimensions widen or crop the workout card. */
+.guided-player,.waltz-demo-panel,.waltz-video-stage,.video-frame{min-width:0!important;width:100%!important;max-width:100%!important}
+.guided-player{overflow:hidden!important}
+.waltz-video-stage{padding-left:0!important;padding-right:0!important}
+.video-frame{
+  display:block!important;
+  position:relative!important;
+  aspect-ratio:16/9!important;
+  height:auto!important;
+  overflow:hidden!important;
+  border-radius:14px!important;
+  background:#000!important;
+  margin:14px 0 0!important;
+}
+.exercise-video{
+  display:block!important;
+  position:static!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:100%!important;
+  aspect-ratio:16/9!important;
+  object-fit:contain!important;
+  object-position:50% 50%!important;
+  background:#000!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
+}
+@supports (-webkit-touch-callout:none){
+  .exercise-video{width:100%!important;height:100%!important;object-fit:contain!important}
+}
