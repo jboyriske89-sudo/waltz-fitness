@@ -5,7 +5,8 @@ window.WALTZ_CONFIG = {
   SUPABASE_URL: "https://yssdxssdhkdzovtqkrrk.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_Yq0Pja_ItH5rInpdyOq_Sg_anI0PCjO",
   CHECKOUT_FUNCTION_URL: "",
-  PRICE_USD: 10
+  PRICE_USD: 10,
+  PREVIEW_MODE: true
 };
 
 // Compatibility shim for the original MVP.
