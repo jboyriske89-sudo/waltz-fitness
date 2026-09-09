@@ -1,0 +1,9 @@
+{
+  "name": "WALTZ Fitness",
+  "short_name": "WALTZ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0b0c",
+  "theme_color": "#111111",
+  "description": "Personalized 12-week workout programming."
+}
