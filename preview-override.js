@@ -5,12 +5,12 @@
 
   function openPreviewDashboard() {
     if (!isPreview()) return false;
-    if (!window.state?.plan && typeof window.generateProgram === 'function') {
-      window.state.plan = window.generateProgram();
-      try { localStorage.setItem('waltzPlan', JSON.stringify(window.state.plan)); } catch (_) {}
+    if (!state.plan) {
+      state.plan = generateProgram();
+      try { localStorage.setItem('waltzPlan', JSON.stringify(state.plan)); } catch (_) {}
     }
-    if (typeof window.renderDashboard === 'function') window.renderDashboard();
-    if (typeof window.show === 'function') window.show('dashboard');
+    renderDashboard();
+    show('dashboard');
     return true;
   }
 
@@ -25,8 +25,8 @@
 
   // Final onboarding action should build and immediately reveal the workout.
   window.buildPlan = function () {
-    try { localStorage.setItem('waltzProfile', JSON.stringify(window.state.profile)); } catch (_) {}
-    window.show('loading');
+    try { localStorage.setItem('waltzProfile', JSON.stringify(state.profile)); } catch (_) {}
+    show('loading');
     const msgs = [
       'Analyzing your profile...',
       'Balancing upper and lower body volume...',
@@ -40,10 +40,10 @@
     }, 450);
     setTimeout(() => {
       clearInterval(t);
-      window.state.plan = window.generateProgram();
-      try { localStorage.setItem('waltzPlan', JSON.stringify(window.state.plan)); } catch (_) {}
-      window.renderDashboard();
-      window.show('dashboard');
+      state.plan = generateProgram();
+      try { localStorage.setItem('waltzPlan', JSON.stringify(state.plan)); } catch (_) {}
+      renderDashboard();
+      show('dashboard');
     }, 1600);
   };
 
@@ -54,7 +54,7 @@
     const account = document.getElementById('account');
     if (account) account.style.display = 'none';
     const finalButton = document.getElementById('nextBtn');
-    if (finalButton && window.state && window.steps && window.state.step === window.steps.length - 1) {
+    if (finalButton && state.step === steps.length - 1) {
       finalButton.textContent = 'Build My Workout';
     }
 
