@@ -46,12 +46,36 @@ const WALTZ_VIDEO_URLS = {
   "Romanian Deadlift":"https://dnznrvs05pmza.cloudfront.net/seedance_2_mini/cgt-20260910061755-brfjq/WALTZ_Fitness_educational_exercise_demonstration__Romanian_Deadlift__Use_the_exact_same_premium_visu.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNWEzNGYxZjAzMzg2YmU3ZSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4OTEyMTY0OH0.nOPn7WhChoU6Zl3e7wXKmcgQrB1Of_0gy1IWyVpnv-0"
 };
 
+
+const WALTZ_VIDEO_STEPS = {
+  "Barbell Bench Press":[["Start",0.15],["Lower",2.0],["Press",4.15]],
+  "Barbell Hip Thrust":[["Start",0.15],["Lift",2.0],["Lower",4.15]],
+  "Lat Pulldown":[["Start",0.15],["Pull",2.0],["Return",4.15]],
+  "Back Squat":[["Start",0.15],["Lower",2.0],["Stand",4.15]],
+  "Romanian Deadlift":[["Start",0.15],["Hinge",2.0],["Return",4.15]]
+};
+function demoVideoId(name){return "waltz-video-"+name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
+function seekDemo(name,time){
+  const v=document.getElementById(demoVideoId(name));
+  if(!v) return;
+  v.pause();
+  v.currentTime=time;
+}
+function playDemo(name){
+  const v=document.getElementById(demoVideoId(name));
+  if(!v) return;
+  v.play().catch(()=>{});
+}
+
 function demoFor(name){return WALTZ_DEMOS[name]||{primary:["Target muscle"],activation:["Stabilizers"],how:["Set a stable starting position.","Move through a controlled, pain-free range.","Keep the target area working and avoid momentum.","Return slowly to the start."]};}
 function targetRegion(primary){const s=primary.join(" ").toLowerCase();if(/quad|hamstring|glute|calf|leg/.test(s))return"LOWER BODY";if(/chest|shoulder|tricep|bicep|back|lat|delt/.test(s))return"UPPER BODY";return"CORE";}
 function videoDemo(ex){
  const d=demoFor(ex.name), url=WALTZ_VIDEO_URLS[ex.name], region=targetRegion(d.primary);
- if(url)return `<div class="waltz-video-stage"><div class="demo-stage-label"><span>HOW TO DO IT</span><strong>${escapeHtml(ex.name).toUpperCase()}</strong></div><div class="video-frame"><video class="exercise-video" src="${url}" autoplay muted loop playsinline controls></video></div><div class="demo-legend"><span><i class="green"></i>Primary: ${d.primary.map(escapeHtml).join(" • ")}</span><span><i class="red"></i>Activation: ${d.activation.map(escapeHtml).join(" • ")}</span></div></div>`;
- return `<div class="waltz-video-stage reference-mode"><div class="demo-stage-label"><span>EXERCISE DEMO</span><strong>${escapeHtml(ex.name).toUpperCase()}</strong></div><div class="video-frame reference-frame"><div class="reference-silhouette"><div class="ref-head"></div><div class="ref-body"><span class="ref-primary"></span><span class="ref-tension left"></span><span class="ref-tension right"></span></div><div class="ref-legs"></div></div><div class="reference-overlay"><span class="preview-chip">VIDEO DEMO</span><strong>Motion clip coming next</strong><small>WALTZ anatomical reference • ${region}</small></div></div><div class="demo-legend"><span><i class="green"></i>Primary: ${d.primary.map(escapeHtml).join(" • ")}</span><span><i class="red"></i>Activation: ${d.activation.map(escapeHtml).join(" • ")}</span></div></div>`;
+ if(url){
+   const id=demoVideoId(ex.name), steps=WALTZ_VIDEO_STEPS[ex.name]||[["Start",0.15],["Middle",2.0],["Return",4.15]];
+   return `<div class="waltz-video-stage"><div class="demo-stage-label"><span>HOW TO DO IT</span><strong>${escapeHtml(ex.name).toUpperCase()}</strong></div><div class="video-frame"><video id="${id}" class="exercise-video" src="${url}" autoplay muted loop playsinline controls preload="metadata"></video></div><div class="demo-step-strip">${steps.map((s,i)=>`<button type="button" onclick="seekDemo('${escapeHtml(ex.name).replace(/'/g,"\\'")}',${s[1]})"><span>${i+1}</span><strong>${s[0]}</strong></button>`).join("")}<button type="button" class="replay-step" onclick="playDemo('${escapeHtml(ex.name).replace(/'/g,"\\'")}')">▶ Play</button></div><div class="demo-legend"><span><i class="green"></i>Primary: ${d.primary.map(escapeHtml).join(" • ")}</span><span><i class="red"></i>Activation: ${d.activation.map(escapeHtml).join(" • ")}</span></div></div>`;
+ }
+ return `<div class="waltz-video-stage reference-mode"><div class="demo-stage-label"><span>EXERCISE DEMO</span><strong>${escapeHtml(ex.name).toUpperCase()}</strong></div><div class="video-frame reference-frame"><div class="reference-overlay"><span class="preview-chip">VIDEO DEMO</span><strong>Motion clip coming next</strong><small>WALTZ anatomical reference • ${region}</small></div></div><div class="demo-legend"><span><i class="green"></i>Primary: ${d.primary.map(escapeHtml).join(" • ")}</span><span><i class="red"></i>Activation: ${d.activation.map(escapeHtml).join(" • ")}</span></div></div>`;
 }
 function renderSetLogger(ex,workout,key,saved){return `<div class="waltz-log-panel hidden" id="exerciseLogPanel"><div class="player-body"><span class="mini-label">${workout.name}</span><h2>${escapeHtml(ex.name)}</h2><div class="exercise-meta"><span class="badge">${escapeHtml(ex.muscle)}</span><span class="badge">${ex.sets} sets</span><span class="badge">${escapeHtml(ex.reps)} reps</span><span class="badge">Rest ${escapeHtml(ex.rest)}</span></div><div class="set-table">${Array.from({length:ex.sets},(_,s)=>`<div class="set-row"><strong>Set ${s+1}</strong><input inputmode="decimal" placeholder="kg" value="${saved[s]?.weight||""}" id="wt-${s}"><input inputmode="numeric" placeholder="reps" value="${saved[s]?.reps||""}" id="rp-${s}"><button class="${saved[s]?.done?"done":""}" onclick="toggleSet(${s})">${saved[s]?.done?"✓":"Done"}</button></div>`).join("")}</div><div class="player-actions"><button class="secondary" onclick="backToExerciseDemo()">Watch Demo</button><button class="primary" onclick="nextExercise()">Next</button></div></div></div>`;}
 function renderGuidedExercise(){const{w,i,e}=state.activeWorkout,workout=state.plan.weeks[w-1].workouts[i],ex=workout.exercises[e],key=`w${w}d${i+1}-${e}`,saved=JSON.parse(localStorage.getItem(key)||"{}"),d=demoFor(ex.name);document.getElementById("playerHost").innerHTML=`<div class="player-card guided-player"><div id="exerciseDemoPanel" class="waltz-demo-panel">${videoDemo(ex)}<div class="player-body demo-copy"><span class="mini-label">${workout.name} • Exercise ${e+1}/${workout.exercises.length}</span><h2>${escapeHtml(ex.name)}</h2><section class="how-card"><h3>How to do it</h3><ol>${d.how.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ol></section><section class="target-card"><h3>Target</h3><div><span class="target-label primary">Primary</span><strong>${d.primary.map(escapeHtml).join(" • ")}</strong></div><div><span class="target-label tension">Activation</span><strong>${d.activation.map(escapeHtml).join(" • ")}</strong></div></section><button class="primary start-exercise-btn" onclick="startLoggedExercise()">Start Exercise</button></div></div>${renderSetLogger(ex,workout,key,saved)}</div>`;}
