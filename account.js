@@ -2,6 +2,10 @@ let waltzSupabase = null;
 let waltzUser = null;
 let waltzEntitled = false;
 
+function previewMode(){
+  return Boolean(window.WALTZ_CONFIG?.PREVIEW_MODE);
+}
+
 function accountConfigured(){
   const c=window.WALTZ_CONFIG||{};
   return Boolean(c.SUPABASE_URL && c.SUPABASE_ANON_KEY);
@@ -28,7 +32,7 @@ async function hydrateAccount(){
   if(location.search.includes('checkout=success')){
     history.replaceState({},'',location.pathname);
     await refreshEntitlement(true);
-    if(waltzEntitled && state.plan){ renderDashboard(); show('dashboard'); }
+    if((waltzEntitled || previewMode()) && state.plan){ renderDashboard(); show('dashboard'); }
   }
 }
 
@@ -48,6 +52,8 @@ function renderAccountHeader(){
   if(!host) return;
   if(waltzUser){
     host.innerHTML=`<span class="user-chip">${escapeHtml(waltzUser.email||'Account')}</span><button class="ghost" onclick="logoutWaltz()">Log out</button>`;
+  } else if(previewMode()) {
+    host.innerHTML=`<span class="user-chip">Preview mode</span>`;
   } else {
     host.innerHTML=`<button class="ghost" onclick="showLogin()">Log in</button>`;
   }
@@ -95,8 +101,11 @@ async function submitAuth(ev){
   await saveCloudProfile();
   await refreshEntitlement();
   renderAccountHeader();
-  if(waltzEntitled){ await loadCloudState(); renderDashboard(); show('dashboard'); }
-  else showPaywall();
+  if(waltzEntitled || previewMode()){
+    await loadCloudState();
+    renderDashboard();
+    show('dashboard');
+  } else showPaywall();
 }
 
 async function logoutWaltz(){
@@ -105,12 +114,22 @@ async function logoutWaltz(){
 }
 
 function showPaywall(){
+  if(previewMode()){
+    renderDashboard();
+    show('dashboard');
+    return;
+  }
   document.getElementById('paywallEmail').textContent=waltzUser?.email||'your account';
   show('paywall');
 }
 
 async function startCheckout(){
   const err=document.getElementById('paywallError'); err.textContent='';
+  if(previewMode()){
+    renderDashboard();
+    show('dashboard');
+    return;
+  }
   if(!waltzUser){showSignup();return;}
   const url=window.WALTZ_CONFIG?.CHECKOUT_FUNCTION_URL;
   if(!url){err.textContent='Payments are not connected yet. The app owner needs to finish the Stripe setup.';return;}
@@ -146,7 +165,8 @@ async function loadCloudState(){
 
 function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 
-// Replace the MVP's final onboarding action with account + $10 paywall flow.
+// During preview mode, onboarding goes straight to the generated dashboard so the
+// workout library and animated exercise demonstrations can be reviewed without payment.
 window.buildPlan=function(){
   localStorage.setItem('waltzProfile',JSON.stringify(state.profile));
   show('loading');
@@ -156,6 +176,13 @@ window.buildPlan=function(){
     clearInterval(t);
     state.plan=generateProgram();
     localStorage.setItem('waltzPlan',JSON.stringify(state.plan));
+
+    if(previewMode()){
+      renderDashboard();
+      show('dashboard');
+      return;
+    }
+
     if(waltzUser) await saveCloudProfile();
     if(waltzUser){await refreshEntitlement(); waltzEntitled?unlockDashboard():showPaywall();}
     else showSignup();
@@ -171,10 +198,11 @@ async function unlockDashboard(){
 const originalCloseWorkout=window.closeWorkout;
 window.closeWorkout=function(){ originalCloseWorkout(); saveCloudProgress(); };
 
-// Lock an existing local program behind the user's account when cloud auth is configured.
 window.addEventListener('load',()=>{
   initWaltzAccount();
+  renderAccountHeader();
   setTimeout(()=>{
+    if(previewMode()) return;
     if(accountConfigured() && state.plan && (!waltzUser || !waltzEntitled)){
       waltzUser?showPaywall():showLogin();
     }
