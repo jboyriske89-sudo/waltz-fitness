@@ -7,6 +7,7 @@
   <title>WALTZ Fitness</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="account.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -15,7 +16,9 @@
         <div class="brand-mark">W</div>
         <div><strong>WALTZ</strong><span>FITNESS</span></div>
       </div>
-      <button id="resetBtn" class="ghost hidden">Reset</button>
+      <div id="accountActions" class="account-actions">
+        <button class="ghost" onclick="showLogin()">Log in</button>
+      </div>
     </header>
 
     <main>
@@ -23,12 +26,12 @@
         <div class="hero">
           <div class="eyebrow">PERSONALIZED TRAINING</div>
           <h1>Your body. Your goal.<br>Your 12-week plan.</h1>
-          <p>Build a personalized strength and fitness program based on your goals, experience, schedule, and focus areas.</p>
+          <p>Build a personalized strength and fitness program based on your goals, experience, schedule, and focus areas. Your account keeps your plan and progress private to you.</p>
           <button class="primary" onclick="startOnboarding()">Build My Plan</button>
           <div class="hero-stats">
             <div><strong>12</strong><span>Weeks</span></div>
-            <div><strong>5</strong><span>Phases</span></div>
-            <div><strong>100%</strong><span>Personalized</span></div>
+            <div><strong>$10</strong><span>One-time access</span></div>
+            <div><strong>Private</strong><span>Your data</span></div>
           </div>
         </div>
       </section>
@@ -50,6 +53,44 @@
           <div class="spinner"></div>
           <h2>Building your WALTZ plan</h2>
           <p id="loadingText">Analyzing your profile...</p>
+        </div>
+      </section>
+
+      <section id="account" class="screen">
+        <div class="auth-shell">
+          <div class="auth-card">
+            <div class="eyebrow">YOUR PRIVATE ACCOUNT</div>
+            <h2 id="authTitle">Create your WALTZ account</h2>
+            <p id="authCopy">Your program and progress stay attached to your own account.</p>
+            <form class="auth-form" onsubmit="submitAuth(event)">
+              <input id="authMode" type="hidden" value="signup">
+              <input id="authEmail" type="email" autocomplete="email" placeholder="Email address" required>
+              <input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="Password (8+ characters)" required>
+              <div id="authError" class="auth-error"></div>
+              <button id="authSubmit" class="primary" type="submit">Create account</button>
+              <button id="authSwitch" class="secondary" type="button" onclick="switchAuthMode()">Already have an account? Log in</button>
+            </form>
+            <p class="account-note">WALTZ Fitness stores each member's profile, program and progress under their own authenticated account.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="paywall" class="screen">
+        <div class="auth-shell">
+          <div class="paywall-card">
+            <div class="eyebrow">YOUR PLAN IS READY</div>
+            <h2>Unlock your personalized 12-week program</h2>
+            <p>Your plan has been built from the information you provided. Unlock it once and keep your workout history and progress in your private WALTZ account.</p>
+            <div class="price-box"><div><span class="mini-label">12-WEEK PROGRAM</span><div id="paywallEmail" class="account-note"></div></div><strong>$10</strong></div>
+            <div class="lock-list">
+              <div class="lock-item"><div class="lock-dot">✓</div><div><strong>Personalized 12-week schedule</strong><br><span class="account-note">Built around your goal, experience, focus areas and weekly availability.</span></div></div>
+              <div class="lock-item"><div class="lock-dot">✓</div><div><strong>Private workout history</strong><br><span class="account-note">Your completed sessions, weights and reps stay under your account.</span></div></div>
+              <div class="lock-item"><div class="lock-dot">✓</div><div><strong>Exercise demonstrations</strong><br><span class="account-note">Animated exercise demonstrations are being added across the exercise library.</span></div></div>
+            </div>
+            <div id="paywallError" class="auth-error"></div>
+            <button class="primary" style="width:100%" onclick="startCheckout()">Pay $10 & Unlock Program</button>
+            <button class="secondary" style="width:100%;margin-top:10px" onclick="logoutWaltz()">Use a different account</button>
+          </div>
         </div>
       </section>
 
@@ -106,6 +147,10 @@
       </section>
     </main>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="account.js"></script>
 </body>
 </html>
