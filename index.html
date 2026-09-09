@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111111" />
+  <title>WALTZ Fitness</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">W</div>
+        <div><strong>WALTZ</strong><span>FITNESS</span></div>
+      </div>
+      <button id="resetBtn" class="ghost hidden">Reset</button>
+    </header>
+
+    <main>
+      <section id="welcome" class="screen active">
+        <div class="hero">
+          <div class="eyebrow">PERSONALIZED TRAINING</div>
+          <h1>Your body. Your goal.<br>Your 12-week plan.</h1>
+          <p>Build a personalized strength and fitness program based on your goals, experience, schedule, and focus areas.</p>
+          <button class="primary" onclick="startOnboarding()">Build My Plan</button>
+          <div class="hero-stats">
+            <div><strong>12</strong><span>Weeks</span></div>
+            <div><strong>5</strong><span>Phases</span></div>
+            <div><strong>100%</strong><span>Personalized</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="onboarding" class="screen">
+        <div class="progress-wrap">
+          <div class="progress-meta"><span id="stepLabel">Step 1 of 9</span><span id="stepPercent">11%</span></div>
+          <div class="progress"><div id="progressBar"></div></div>
+        </div>
+        <div id="stepHost"></div>
+        <div class="nav-actions">
+          <button id="backBtn" class="secondary" onclick="prevStep()">Back</button>
+          <button id="nextBtn" class="primary" onclick="nextStep()">Continue</button>
+        </div>
+      </section>
+
+      <section id="loading" class="screen">
+        <div class="loader-card">
+          <div class="spinner"></div>
+          <h2>Building your WALTZ plan</h2>
+          <p id="loadingText">Analyzing your profile...</p>
+        </div>
+      </section>
+
+      <section id="dashboard" class="screen">
+        <div class="dashboard-head">
+          <div>
+            <div class="eyebrow">YOUR WALTZ PROGRAM</div>
+            <h1 id="programTitle">12-Week Program</h1>
+            <p id="programSubtitle"></p>
+          </div>
+          <div class="week-pill">Week <strong id="currentWeek">1</strong> / 12</div>
+        </div>
+
+        <div class="phase-card">
+          <div>
+            <span class="mini-label">CURRENT PHASE</span>
+            <h3 id="phaseName">Foundation</h3>
+            <p id="phaseDesc">Technique, control, and movement quality.</p>
+          </div>
+          <div class="phase-progress"><div id="phaseProgress"></div></div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="plan">Plan</button>
+          <button class="tab" data-tab="today">Today's Workout</button>
+          <button class="tab" data-tab="progress">Progress</button>
+        </div>
+
+        <div id="planTab" class="tab-content active">
+          <div id="weekSelector" class="week-selector"></div>
+          <div id="workoutList" class="workout-list"></div>
+        </div>
+
+        <div id="todayTab" class="tab-content">
+          <div id="todayWorkout"></div>
+        </div>
+
+        <div id="progressTab" class="tab-content">
+          <div class="progress-grid">
+            <div class="metric-card"><span>Workouts completed</span><strong id="completedCount">0</strong></div>
+            <div class="metric-card"><span>Program progress</span><strong id="completionPercent">0%</strong></div>
+            <div class="metric-card"><span>Current streak</span><strong id="streakCount">0 days</strong></div>
+          </div>
+          <div class="note-card">
+            <h3>Progressive overload</h3>
+            <p>When you complete all prescribed reps with good form, increase load slightly in your next session. Keep technique consistent and stop if an exercise causes sharp or unusual pain.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="workoutPlayer" class="screen">
+        <button class="text-btn" onclick="closeWorkout()">← Back to program</button>
+        <div id="playerHost"></div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
