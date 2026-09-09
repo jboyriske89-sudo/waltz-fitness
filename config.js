@@ -7,3 +7,17 @@ window.WALTZ_CONFIG = {
   CHECKOUT_FUNCTION_URL: "",
   PRICE_USD: 10
 };
+
+// Compatibility shim for the original MVP.
+// app.js still references a legacy #resetBtn during startup. The visible header was
+// replaced by account controls, so create an invisible reset button before app.js runs
+// to prevent startup from aborting and leaving onboarding blank.
+if (!document.getElementById('resetBtn')) {
+  const legacyReset = document.createElement('button');
+  legacyReset.id = 'resetBtn';
+  legacyReset.className = 'hidden';
+  legacyReset.type = 'button';
+  legacyReset.setAttribute('aria-hidden', 'true');
+  legacyReset.tabIndex = -1;
+  document.body.appendChild(legacyReset);
+}
