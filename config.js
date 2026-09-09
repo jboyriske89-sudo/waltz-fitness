@@ -1,9 +1,9 @@
 // WALTZ Fitness public client configuration.
-// Supabase URL + anon key are safe to expose in a browser app when Row Level Security is enabled.
+// Supabase URL + publishable key are safe to expose in a browser app when Row Level Security is enabled.
 // Never put Stripe secret keys or Supabase service-role keys in this file.
 window.WALTZ_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
+  SUPABASE_URL: "https://yssdxssdhkdzovtqkrrk.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_Yq0Pja_ItH5rInpdyOq_Sg_anI0PCjO",
   CHECKOUT_FUNCTION_URL: "",
   PRICE_USD: 10
 };
