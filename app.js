@@ -13,6 +13,20 @@ const steps = [
   renderFocus, renderExperience, renderLocation, renderSchedule
 ];
 
+
+const exerciseVideos = {
+  "Barbell Bench Press": "https://dnznrvs05pmza.cloudfront.net/seedance_2_mini/cgt-20260910060904-7k8l9/Animate_the_exact_supplied_WALTZ_Fitness_reference_into_ONE_technically_controlled_barbell_bench_pre.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZjI1YzE1ODQwMDdkNTM5MyIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4OTEzNTQ5Mn0.6htWG8q3wmfKZ7srtwMG4tJQkERxgL2TxzWzCI4RwEg",
+  "Barbell Hip Thrust": "https://dnznrvs05pmza.cloudfront.net/seedance_2_mini/cgt-20260910061756-x2qkz/WALTZ_Fitness_educational_exercise_demonstration__Barbell_Hip_Thrust__Use_the_exact_same_premium_vis.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMTQyNGI4MjFiZTFiNTU2OSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4OTEyNTE1M30.hv9S7IWj6tiouLwXo6iMYKdnjp58yg6mb9UO7n2E8ZM",
+  "Lat Pulldown": "https://dnznrvs05pmza.cloudfront.net/seedance_2_mini/cgt-20260910065404-lnrtc/WALTZ_Fitness_educational_exercise_demonstration__Lat_Pulldown__Same_premium_visual_standard_as_the_.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNGM4MDRhMzU1OGFlZTEyYiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4OTA4ODgyMX0.gD-_CYl6S7l7Z5OLhfasS2kv9EEwhXfYIgywFf49rzc",
+  "Back Squat": "https://dnznrvs05pmza.cloudfront.net/seedance_2_mini/cgt-20260910061750-4cqvp/WALTZ_Fitness_educational_exercise_demonstration__Back_Squat__Use_the_exact_same_premium_visual_lang.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYzNjYTU4MmQ2NWFlNDEzYSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4OTE0NzU2NX0.SK3nsyyWPoawQZEHIqTNfAX_r3ojT3Z5gLotimly7k4",
+  "Romanian Deadlift": "https://dnznrvs05pmza.cloudfront.net/seedance_2_mini/cgt-20260910061755-brfjq/WALTZ_Fitness_educational_exercise_demonstration__Romanian_Deadlift__Use_the_exact_same_premium_visu.mp4?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiNWEzNGYxZjAzMzg2YmU3ZSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc4OTEyMTY0OH0.nOPn7WhChoU6Zl3e7wXKmcgQrB1Of_0gy1IWyVpnv-0"
+};
+function exerciseDemo(name){
+  const src=exerciseVideos[name];
+  if(src) return `<div class="video-placeholder" style="padding:0;overflow:hidden;background:#050606"><video src="${src}" autoplay muted loop playsinline controls preload="metadata" style="display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#050606"></video></div>`;
+  return `<div class="video-placeholder"><div><p><strong>${name}</strong><br><span style="color:#aaa">Exercise demonstration coming soon</span></p></div></div>`;
+}
+
 const exerciseDB = {
   chest: [
     ["Barbell Bench Press","Chest","4","6-10","90 sec"],
@@ -238,10 +252,7 @@ function renderExercise(){
   const {w,i,e}=state.activeWorkout, workout=state.plan.weeks[w-1].workouts[i], ex=workout.exercises[e], key=`w${w}d${i+1}-${e}`;
   const saved=JSON.parse(localStorage.getItem(key)||"{}");
   document.getElementById("playerHost").innerHTML=`<div class="player-card">
-    <div class="video-placeholder">
-      <div><div class="demo-person animate"><div class="head"></div><div class="torso"></div><div class="limb arm1"></div><div class="limb arm2"></div><div class="limb leg1"></div><div class="limb leg2"></div></div>
-      <p><strong>${state.profile.gender==="female"?"Female":"Male"} exercise demo</strong><br><span style="color:#aaa">AI video slot ready for ${ex.name}</span></p></div>
-    </div>
+    ${exerciseDemo(ex.name)}
     <div class="player-body"><span class="mini-label">${workout.name} • Exercise ${e+1}/${workout.exercises.length}</span><h2>${ex.name}</h2>
     <div class="exercise-meta"><span class="badge">${ex.muscle}</span><span class="badge">${ex.sets} sets</span><span class="badge">${ex.reps} reps</span><span class="badge">Rest ${ex.rest}</span></div>
     <div class="set-table">${Array.from({length:ex.sets},(_,s)=>`<div class="set-row"><strong>Set ${s+1}</strong><input inputmode="decimal" placeholder="kg" value="${saved[s]?.weight||""}" id="wt-${s}"><input inputmode="numeric" placeholder="reps" value="${saved[s]?.reps||""}" id="rp-${s}"><button class="${saved[s]?.done?"done":""}" onclick="toggleSet(${s})">${saved[s]?.done?"✓":"Done"}</button></div>`).join("")}</div>
