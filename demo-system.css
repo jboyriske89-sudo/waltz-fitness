@@ -96,3 +96,12 @@
 @supports (-webkit-touch-callout:none){
   .exercise-video{width:100%!important;height:100%!important;object-fit:contain!important}
 }
+
+
+/* Reusable WALTZ live 3D mannequin player */
+.waltz-3d-host{position:relative;width:100%;max-width:100%;background:#050607;border-radius:16px;overflow:hidden;margin-top:14px;min-height:260px}
+.waltz-3d-host canvas{display:block;width:100%!important;height:auto!important;aspect-ratio:16/9;background:#050607}
+.waltz-3d-host .three-status{position:absolute;inset:0;display:grid;place-items:center;color:#9da1a8;font-size:12px;letter-spacing:.04em;pointer-events:none;z-index:0}
+.waltz-3d-host canvas+.three-status{display:none}
+.waltz-3d-host .three-controls{position:relative;z-index:2;margin-top:0;padding:10px;background:#0b0c0e;border-top:1px solid #202329}
+.three-load-error .three-status{display:grid!important;color:#ff7a82}
